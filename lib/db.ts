@@ -41,6 +41,21 @@ export function getDb(): Database.Database {
       created_at TEXT DEFAULT (datetime('now'))
     );
 
+    DROP TABLE IF EXISTS recurring_blocks;
+
+    CREATE TABLE IF NOT EXISTS recurring_blocks (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      start_time TEXT,
+      duration INTEGER NOT NULL,
+      note TEXT DEFAULT '',
+      repeat_type TEXT NOT NULL DEFAULT 'weekly' CHECK(repeat_type IN ('daily', 'weekly', 'monthly', 'yearly')),
+      repeat_interval INTEGER NOT NULL DEFAULT 1,
+      repeat_days TEXT NOT NULL DEFAULT '',
+      repeat_start TEXT NOT NULL DEFAULT '',
+      created_at TEXT DEFAULT (datetime('now'))
+    );
+
     CREATE TABLE IF NOT EXISTS habit_logs (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       habit_id INTEGER NOT NULL,
