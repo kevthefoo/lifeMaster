@@ -35,6 +35,11 @@ yarn-error.log*
 
 # database
 *.db
+*.db-shm
+*.db-wal
+
+# local tooling settings
+.claude/settings.local.json
 
 # vercel
 .vercel

@@ -7,24 +7,25 @@ import TaskSection from "@/components/TaskSection";
 import HabitSection from "@/components/HabitSection";
 
 function todayStr() {
-  return new Date().toISOString().split("T")[0];
-}
-
-function getInitialDate() {
-  if (typeof window !== "undefined") {
-    const params = new URLSearchParams(window.location.search);
-    return params.get("date") || todayStr();
-  }
-  return todayStr();
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
 export default function Dashboard() {
-  const [date, setDate] = useState(getInitialDate);
+  const [date, setDate] = useState("");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setDate(params.get("date") || todayStr());
+    setMounted(true);
+  }, []);
   const [timeBlocks, setTimeBlocks] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [habits, setHabits] = useState([]);
 
   const fetchAll = useCallback(() => {
+    if (!date) return;
     fetch(`/api/time-blocks?date=${date}`).then((r) => r.json()).then(setTimeBlocks);
     fetch(`/api/tasks`).then((r) => r.json()).then(setTasks);
     fetch(`/api/habit-logs?date=${date}`).then((r) => r.json()).then(setHabits);
@@ -35,9 +36,9 @@ export default function Dashboard() {
   }, [fetchAll]);
 
   function shiftDate(days: number) {
-    const d = new Date(date);
+    const d = new Date(date + "T00:00:00");
     d.setDate(d.getDate() + days);
-    setDate(d.toISOString().split("T")[0]);
+    setDate(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`);
   }
 
   const displayDate = new Date(date + "T00:00:00").toLocaleDateString("en-US", {
@@ -48,6 +49,10 @@ export default function Dashboard() {
   });
 
   const isToday = date === todayStr();
+
+  if (!mounted) {
+    return <div className="flex h-screen items-center justify-center bg-gray-50"><span className="text-gray-400">Loading...</span></div>;
+  }
 
   return (
     <div className="flex h-screen flex-col bg-gray-50">

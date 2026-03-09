@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 
 interface TimeBlock {
   id: number | string;
@@ -13,8 +13,9 @@ interface TimeBlock {
   recurring: number;
 }
 
-const HOUR_HEIGHT = 60;
-const HOURS = Array.from({ length: 24 }, (_, i) => i);
+const HOUR_HEIGHT = 72;
+const HOURS_PER_PAGE = 8;
+const PAGE_LABELS = ["12 AM – 8 AM", "8 AM – 4 PM", "4 PM – 12 AM"];
 
 const BLOCK_COLORS = [
   "bg-blue-100 border-blue-400 text-blue-900",
@@ -57,7 +58,10 @@ export default function DayTimeline({
   date: string;
   onRefresh: () => void;
 }) {
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const [page, setPage] = useState(() => {
+    const h = new Date().getHours();
+    return Math.floor(h / HOURS_PER_PAGE);
+  });
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState("");
   const [startTime, setStartTime] = useState(() => {
@@ -94,14 +98,16 @@ export default function DayTimeline({
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    if (scrollRef.current) {
-      const scrollTo = Math.max(0, (nowMinutes / 60 - 1) * HOUR_HEIGHT);
-      scrollRef.current.scrollTop = scrollTo;
-    }
-  }, []);
+  const pageStartHour = page * HOURS_PER_PAGE;
+  const pageEndHour = pageStartHour + HOURS_PER_PAGE;
+  // Include the end boundary hour (e.g. 4 PM) unless it's hour 24
+  const pageHours = Array.from(
+    { length: HOURS_PER_PAGE + (pageEndHour <= 23 ? 1 : 0) },
+    (_, i) => pageStartHour + i
+  );
 
-  const isToday = date === new Date().toISOString().split("T")[0];
+  const nowDate = new Date();
+  const isToday = date === `${nowDate.getFullYear()}-${String(nowDate.getMonth() + 1).padStart(2, "0")}-${String(nowDate.getDate()).padStart(2, "0")}`;
 
   const scheduledBlocks = blocks
     .filter((b) => b.start_time)
@@ -477,15 +483,34 @@ export default function DayTimeline({
         </div>
       )}
 
+      {/* Timeline pagination */}
+      <div className="flex items-center justify-between border-b border-gray-200 px-4 py-2">
+        <button
+          onClick={() => setPage((p) => Math.max(0, p - 1))}
+          disabled={page === 0}
+          className="rounded-md border border-gray-300 px-2.5 py-1 text-sm hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed"
+        >
+          &larr;
+        </button>
+        <span className="text-sm font-medium text-gray-600">{PAGE_LABELS[page]}</span>
+        <button
+          onClick={() => setPage((p) => Math.min(2, p + 1))}
+          disabled={page === 2}
+          className="rounded-md border border-gray-300 px-2.5 py-1 text-sm hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed"
+        >
+          &rarr;
+        </button>
+      </div>
+
       {/* Timeline */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto">
-        <div className="relative" style={{ height: 24 * HOUR_HEIGHT }}>
+      <div className="flex-1 overflow-hidden">
+        <div className="relative" style={{ height: HOURS_PER_PAGE * HOUR_HEIGHT + 16 , paddingTop: 16 }}>
           {/* Hour grid lines */}
-          {HOURS.map((hour) => (
+          {pageHours.map((hour, idx) => (
             <div
               key={hour}
               className="absolute left-0 right-0 border-t border-gray-100"
-              style={{ top: hour * HOUR_HEIGHT }}
+              style={{ top: 16 + idx * HOUR_HEIGHT }}
             >
               <span className="absolute -top-3 left-2 text-xs text-gray-400 bg-white pr-2">
                 {formatHour(hour)}
@@ -494,10 +519,10 @@ export default function DayTimeline({
           ))}
 
           {/* Current time indicator */}
-          {isToday && (
+          {isToday && nowMinutes >= pageStartHour * 60 && nowMinutes < pageEndHour * 60 && (
             <div
               className="absolute left-0 right-0 z-20 pointer-events-none"
-              style={{ top: (nowMinutes / 60) * HOUR_HEIGHT }}
+              style={{ top: 16 + ((nowMinutes - pageStartHour * 60) / 60) * HOUR_HEIGHT }}
             >
               <div className="flex items-center">
                 <div className="h-3 w-3 -ml-1.5 rounded-full bg-red-500" />
@@ -507,38 +532,47 @@ export default function DayTimeline({
           )}
 
           {/* Time blocks */}
-          {scheduledBlocks.map((block, i) => {
-            const startMin = timeToMinutes(block.start_time!);
-            const top = (startMin / 60) * HOUR_HEIGHT;
-            const height = Math.max((block.duration / 60) * HOUR_HEIGHT, 24);
-            const colorClass = block.recurring
-              ? RECURRING_COLORS[i % RECURRING_COLORS.length]
-              : BLOCK_COLORS[i % BLOCK_COLORS.length];
+          {scheduledBlocks
+            .filter((block) => {
+              const startMin = timeToMinutes(block.start_time!);
+              const endMin = startMin + block.duration;
+              return endMin > pageStartHour * 60 && startMin < pageEndHour * 60;
+            })
+            .map((block, i) => {
+              const startMin = timeToMinutes(block.start_time!);
+              const endMin = startMin + block.duration;
+              const clampedStart = Math.max(startMin, pageStartHour * 60);
+              const clampedEnd = Math.min(endMin, pageEndHour * 60);
+              const top = 16 + ((clampedStart - pageStartHour * 60) / 60) * HOUR_HEIGHT;
+              const height = Math.max(((clampedEnd - clampedStart) / 60) * HOUR_HEIGHT, 24);
+              const colorClass = block.recurring
+                ? RECURRING_COLORS[i % RECURRING_COLORS.length]
+                : BLOCK_COLORS[i % BLOCK_COLORS.length];
 
-            return (
-              <div
-                key={block.id}
-                onClick={() => openEdit(block)}
-                className={`absolute left-16 right-3 z-10 rounded-md border-l-4 px-3 py-1 cursor-pointer hover:brightness-95 transition group overflow-hidden ${colorClass}`}
-                style={{ top, height }}
-              >
-                <div className="min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-sm font-medium truncate">{block.title}</span>
-                    {block.recurring === 1 && (
-                      <span className="shrink-0 text-[10px] opacity-60" title="Recurring">↻</span>
+              return (
+                <div
+                  key={block.id}
+                  onClick={() => openEdit(block)}
+                  className={`absolute left-16 right-3 z-10 rounded-md border-l-4 px-3 py-1 cursor-pointer hover:brightness-95 transition group overflow-hidden ${colorClass}`}
+                  style={{ top, height }}
+                >
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-sm font-medium truncate">{block.title}</span>
+                      {block.recurring === 1 && (
+                        <span className="shrink-0 text-[10px] opacity-60" title="Recurring">↻</span>
+                      )}
+                    </div>
+                    {height > 32 && (
+                      <div className="text-xs opacity-70">
+                        {block.start_time} - {minutesToTime(timeToMinutes(block.start_time!) + block.duration)}
+                        {block.note && ` | ${block.note}`}
+                      </div>
                     )}
                   </div>
-                  {height > 32 && (
-                    <div className="text-xs opacity-70">
-                      {block.start_time} - {minutesToTime(timeToMinutes(block.start_time!) + block.duration)}
-                      {block.note && ` | ${block.note}`}
-                    </div>
-                  )}
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
       </div>
     </div>

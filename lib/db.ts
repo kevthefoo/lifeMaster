@@ -41,8 +41,6 @@ export function getDb(): Database.Database {
       created_at TEXT DEFAULT (datetime('now'))
     );
 
-    DROP TABLE IF EXISTS recurring_blocks;
-
     CREATE TABLE IF NOT EXISTS recurring_blocks (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       title TEXT NOT NULL,
