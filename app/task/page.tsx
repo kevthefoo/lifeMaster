@@ -299,6 +299,9 @@ export default function TaskPage() {
               &larr; Schedule
             </Link>
             <h1 className="text-xl font-bold text-gray-900">Tasks</h1>
+            <Link href="/bomb" className="text-sm text-gray-500 hover:text-gray-700">
+              Bombs
+            </Link>
             <Link href="/calendar" className="text-sm text-gray-500 hover:text-gray-700">
               Calendar
             </Link>

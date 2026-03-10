@@ -6,6 +6,7 @@ import Link from "next/link";
 interface DayData {
   events: number;
   tasks: number;
+  bombs: number;
 }
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -84,6 +85,9 @@ export default function CalendarPage() {
               &larr; Schedule
             </Link>
             <h1 className="text-xl font-bold text-gray-900">Calendar</h1>
+            <Link href="/bomb" className="text-sm text-gray-500 hover:text-gray-700">
+              Bombs
+            </Link>
           </div>
           <div className="flex items-center gap-3">
             <button
@@ -145,6 +149,7 @@ export default function CalendarPage() {
               const dayData = data[ds];
               const eventCount = dayData?.events || 0;
               const taskCount = dayData?.tasks || 0;
+              const bombCount = dayData?.bombs || 0;
 
               return (
                 <Link
@@ -174,6 +179,13 @@ export default function CalendarPage() {
                         {renderDots(taskCount, "bg-yellow-400")}
                       </div>
                     )}
+                    {bombCount > 0 && (
+                      <div className="flex gap-0.5 flex-wrap">
+                        {Array.from({ length: Math.min(bombCount, 5) }, (_, i) => (
+                          <span key={i} className="text-xs leading-none">💣</span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </Link>
               );
@@ -189,6 +201,10 @@ export default function CalendarPage() {
             <div className="flex items-center gap-1.5">
               <span className="inline-block h-2 w-2 rounded-full bg-yellow-400" />
               Daily tasks
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs leading-none">💣</span>
+              Bombs
             </div>
           </div>
         </div>

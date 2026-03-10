@@ -59,15 +59,28 @@ export function GET(request: NextRequest) {
     taskCountMap[row.list_type] = row.count;
   }
 
+  // Count active bombs per date in the month
+  const bombCounts = db
+    .prepare(
+      "SELECT deadline, COUNT(*) as count FROM bombs WHERE deadline >= ? AND deadline <= ? AND status = 'active' GROUP BY deadline"
+    )
+    .all(firstDay, lastDayStr) as { deadline: string; count: number }[];
+
+  const bombMap: Record<string, number> = {};
+  for (const row of bombCounts) {
+    bombMap[row.deadline] = row.count;
+  }
+
   // Build per-date result
-  const result: Record<string, { events: number; tasks: number }> = {};
+  const result: Record<string, { events: number; tasks: number; bombs: number }> = {};
   for (let d = 1; d <= lastDay; d++) {
     const dateStr = `${month}-${String(d).padStart(2, "0")}`;
     const events = (blockMap[dateStr] || 0) + (recurringMap[dateStr] || 0);
     // Daily tasks show on every day, weekly/monthly show as-is
     const tasks = taskCountMap["daily"] || 0;
-    if (events > 0 || tasks > 0) {
-      result[dateStr] = { events, tasks };
+    const bombs = bombMap[dateStr] || 0;
+    if (events > 0 || tasks > 0 || bombs > 0) {
+      result[dateStr] = { events, tasks, bombs };
     }
   }
 

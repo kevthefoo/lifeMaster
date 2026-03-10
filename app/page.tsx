@@ -23,12 +23,14 @@ export default function Dashboard() {
   const [timeBlocks, setTimeBlocks] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [habits, setHabits] = useState([]);
+  const [bombs, setBombs] = useState([]);
 
   const fetchAll = useCallback(() => {
     if (!date) return;
     fetch(`/api/time-blocks?date=${date}`).then((r) => r.json()).then(setTimeBlocks);
     fetch(`/api/tasks`).then((r) => r.json()).then(setTasks);
     fetch(`/api/habit-logs?date=${date}`).then((r) => r.json()).then(setHabits);
+    fetch(`/api/bombs?date=${date}&status=active`).then((r) => r.json()).then(setBombs);
   }, [date]);
 
   useEffect(() => {
@@ -63,6 +65,9 @@ export default function Dashboard() {
             <h1 className="text-xl font-bold text-gray-900">Life Master</h1>
             <Link href="/task" className="text-sm text-gray-500 hover:text-gray-700">
               Tasks
+            </Link>
+            <Link href="/bomb" className="text-sm text-gray-500 hover:text-gray-700">
+              Bombs
             </Link>
             <Link href="/calendar" className="text-sm text-gray-500 hover:text-gray-700">
               Calendar
@@ -106,7 +111,7 @@ export default function Dashboard() {
       <div className="flex flex-1 overflow-hidden">
         {/* Timeline - main area */}
         <main className="w-[480px] shrink-0 overflow-hidden bg-white border-r border-gray-200">
-          <DayTimeline blocks={timeBlocks} date={date} onRefresh={fetchAll} />
+          <DayTimeline blocks={timeBlocks} date={date} onRefresh={fetchAll} bombs={bombs} />
         </main>
 
         {/* Sidebar - tasks & habits */}

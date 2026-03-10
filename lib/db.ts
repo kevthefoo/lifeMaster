@@ -19,6 +19,8 @@ export function getDb(): Database.Database {
       start_time TEXT,
       duration INTEGER NOT NULL,
       note TEXT DEFAULT '',
+      location TEXT DEFAULT '',
+      link TEXT DEFAULT '',
       created_at TEXT DEFAULT (datetime('now'))
     );
 
@@ -47,6 +49,8 @@ export function getDb(): Database.Database {
       start_time TEXT,
       duration INTEGER NOT NULL,
       note TEXT DEFAULT '',
+      location TEXT DEFAULT '',
+      link TEXT DEFAULT '',
       repeat_type TEXT NOT NULL DEFAULT 'weekly' CHECK(repeat_type IN ('daily', 'weekly', 'monthly', 'yearly')),
       repeat_interval INTEGER NOT NULL DEFAULT 1,
       repeat_days TEXT NOT NULL DEFAULT '',
@@ -62,7 +66,36 @@ export function getDb(): Database.Database {
       FOREIGN KEY (habit_id) REFERENCES habits(id) ON DELETE CASCADE,
       UNIQUE(habit_id, date)
     );
+
+    CREATE TABLE IF NOT EXISTS bombs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      deadline TEXT NOT NULL,
+      deadline_time TEXT,
+      priority TEXT NOT NULL DEFAULT 'medium' CHECK(priority IN ('low', 'medium', 'high')),
+      note TEXT DEFAULT '',
+      status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'exploded', 'defused')),
+      created_at TEXT DEFAULT (datetime('now'))
+    );
   `);
+
+  // Add location and link columns if missing (migration for existing databases)
+  const timeBlockCols = db.prepare("PRAGMA table_info(time_blocks)").all() as { name: string }[];
+  const timeBlockColNames = timeBlockCols.map((c) => c.name);
+  if (!timeBlockColNames.includes("location")) {
+    db.exec("ALTER TABLE time_blocks ADD COLUMN location TEXT DEFAULT ''");
+  }
+  if (!timeBlockColNames.includes("link")) {
+    db.exec("ALTER TABLE time_blocks ADD COLUMN link TEXT DEFAULT ''");
+  }
+  const recurringCols = db.prepare("PRAGMA table_info(recurring_blocks)").all() as { name: string }[];
+  const recurringColNames = recurringCols.map((c) => c.name);
+  if (!recurringColNames.includes("location")) {
+    db.exec("ALTER TABLE recurring_blocks ADD COLUMN location TEXT DEFAULT ''");
+  }
+  if (!recurringColNames.includes("link")) {
+    db.exec("ALTER TABLE recurring_blocks ADD COLUMN link TEXT DEFAULT ''");
+  }
 
   return db;
 }

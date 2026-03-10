@@ -10,7 +10,19 @@ interface TimeBlock {
   start_time: string | null;
   duration: number;
   note: string;
+  location: string;
+  link: string;
   recurring: number;
+}
+
+interface Bomb {
+  id: number;
+  title: string;
+  deadline: string;
+  deadline_time: string | null;
+  priority: string;
+  note: string;
+  status: string;
 }
 
 const HOUR_HEIGHT = 72;
@@ -53,10 +65,12 @@ export default function DayTimeline({
   blocks,
   date,
   onRefresh,
+  bombs = [],
 }: {
   blocks: TimeBlock[];
   date: string;
   onRefresh: () => void;
+  bombs?: Bomb[];
 }) {
   const [page, setPage] = useState(() => {
     const h = new Date().getHours();
@@ -74,6 +88,8 @@ export default function DayTimeline({
     return `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
   });
   const [note, setNote] = useState("");
+  const [location, setLocation] = useState("");
+  const [link, setLink] = useState("");
   const [isRecurring, setIsRecurring] = useState(false);
   const [repeatType, setRepeatType] = useState<"daily" | "weekly" | "monthly" | "yearly">("weekly");
   const [repeatInterval, setRepeatInterval] = useState("1");
@@ -85,6 +101,8 @@ export default function DayTimeline({
   const [editStartTime, setEditStartTime] = useState("");
   const [editEndTime, setEditEndTime] = useState("");
   const [editNote, setEditNote] = useState("");
+  const [editLocation, setEditLocation] = useState("");
+  const [editLink, setEditLink] = useState("");
   const [nowMinutes, setNowMinutes] = useState(() => {
     const now = new Date();
     return now.getHours() * 60 + now.getMinutes();
@@ -155,6 +173,8 @@ export default function DayTimeline({
         start_time: startTime,
         duration,
         note,
+        location,
+        link,
         repeat_type: isRecurring ? repeatType : undefined,
         repeat_interval: isRecurring ? parseInt(repeatInterval) : undefined,
         repeat_days: isRecurring && repeatType === "weekly" ? repeatDays : undefined,
@@ -167,6 +187,8 @@ export default function DayTimeline({
     setStartTime(`${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`);
     setEndTime(`${String(later.getHours()).padStart(2, "0")}:${String(later.getMinutes()).padStart(2, "0")}`);
     setNote("");
+    setLocation("");
+    setLink("");
     setIsRecurring(false);
     setRepeatType("weekly");
     setRepeatInterval("1");
@@ -188,6 +210,8 @@ export default function DayTimeline({
     const endMin = timeToMinutes(block.start_time!) + block.duration;
     setEditEndTime(minutesToTime(endMin));
     setEditNote(block.note || "");
+    setEditLocation(block.location || "");
+    setEditLink(block.link || "");
   }
 
   async function handleEditSave(e: React.FormEvent) {
@@ -215,6 +239,8 @@ export default function DayTimeline({
         start_time: editStartTime,
         duration,
         note: editNote,
+        location: editLocation,
+        link: editLink,
       }),
     });
     setEditTarget(null);
@@ -311,6 +337,22 @@ export default function DayTimeline({
               rows={2}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm resize-none"
             />
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={editLocation}
+                onChange={(e) => setEditLocation(e.target.value)}
+                placeholder="Location (optional)"
+                className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm"
+              />
+              <input
+                type="url"
+                value={editLink}
+                onChange={(e) => setEditLink(e.target.value)}
+                placeholder="Link (optional)"
+                className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm"
+              />
+            </div>
             {editTarget.recurring === 1 && (
               <p className="text-xs text-amber-600">This will update all occurrences of this recurring block.</p>
             )}
@@ -387,6 +429,22 @@ export default function DayTimeline({
             rows={2}
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm resize-none"
           />
+          <div className="flex gap-2">
+            <input
+              type="text"
+              placeholder="Location (optional)"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm"
+            />
+            <input
+              type="url"
+              placeholder="Link (optional)"
+              value={link}
+              onChange={(e) => setLink(e.target.value)}
+              className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm"
+            />
+          </div>
 
           {/* Repeat toggle */}
           <div>
@@ -503,8 +561,8 @@ export default function DayTimeline({
       </div>
 
       {/* Timeline */}
-      <div className="flex-1 overflow-hidden">
-        <div className="relative" style={{ height: HOURS_PER_PAGE * HOUR_HEIGHT + 16 , paddingTop: 16 }}>
+      <div className="flex-1 overflow-y-auto">
+        <div className="relative" style={{ minHeight: HOURS_PER_PAGE * HOUR_HEIGHT + 16 , paddingTop: 16 }}>
           {/* Hour grid lines */}
           {pageHours.map((hour, idx) => (
             <div
@@ -566,7 +624,54 @@ export default function DayTimeline({
                     {height > 32 && (
                       <div className="text-xs opacity-70">
                         {block.start_time} - {minutesToTime(timeToMinutes(block.start_time!) + block.duration)}
+                        {block.location && ` | ${block.location}`}
                         {block.note && ` | ${block.note}`}
+                      </div>
+                    )}
+                    {height > 48 && block.link && (
+                      <a
+                        href={block.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="text-xs underline opacity-60 hover:opacity-100 truncate block"
+                      >
+                        {block.link}
+                      </a>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+
+          {/* Bomb blocks */}
+          {bombs
+            .filter((bomb) => bomb.deadline_time)
+            .filter((bomb) => {
+              const endMin = timeToMinutes(bomb.deadline_time!);
+              const startMin = endMin - 60;
+              return endMin > pageStartHour * 60 && startMin < pageEndHour * 60;
+            })
+            .map((bomb) => {
+              const endMin = timeToMinutes(bomb.deadline_time!);
+              const startMin = endMin - 60;
+              const clampedStart = Math.max(startMin, pageStartHour * 60);
+              const clampedEnd = Math.min(endMin, pageEndHour * 60);
+              const top = 16 + ((clampedStart - pageStartHour * 60) / 60) * HOUR_HEIGHT;
+              const height = Math.max(((clampedEnd - clampedStart) / 60) * HOUR_HEIGHT, 24);
+
+              return (
+                <div
+                  key={`bomb-${bomb.id}`}
+                  className="absolute left-16 right-3 z-10 rounded-md border-l-4 px-3 py-1 overflow-hidden border-red-500 bg-red-100 text-red-900"
+                  style={{ top, height }}
+                >
+                  <div className="min-w-0">
+                    <div className="text-sm font-medium truncate">💣 {bomb.title}</div>
+                    {height > 32 && (
+                      <div className="text-xs opacity-70 truncate">
+                        Deadline: {bomb.deadline_time}
+                        {bomb.note && ` | ${bomb.note}`}
                       </div>
                     )}
                   </div>

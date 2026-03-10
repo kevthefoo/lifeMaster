@@ -14,11 +14,11 @@ export async function DELETE(_request: NextRequest, { params }: Params) {
 export async function PUT(request: NextRequest, { params }: Params) {
   const { id } = await params;
   const body = await request.json();
-  const { title, start_time, duration, note, repeat_days } = body;
+  const { title, start_time, duration, note, location, link, repeat_days } = body;
   const db = getDb();
   db.prepare(
-    "UPDATE recurring_blocks SET title = COALESCE(?, title), start_time = ?, duration = COALESCE(?, duration), note = COALESCE(?, note), repeat_days = COALESCE(?, repeat_days) WHERE id = ?"
-  ).run(title, start_time ?? null, duration, note, repeat_days?.join(","), id);
+    "UPDATE recurring_blocks SET title = COALESCE(?, title), start_time = ?, duration = COALESCE(?, duration), note = COALESCE(?, note), location = COALESCE(?, location), link = COALESCE(?, link), repeat_days = COALESCE(?, repeat_days) WHERE id = ?"
+  ).run(title, start_time ?? null, duration, note, location, link, repeat_days?.join(","), id);
   const block = db.prepare("SELECT * FROM recurring_blocks WHERE id = ?").get(id);
   if (!block) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json(block);

@@ -32,6 +32,8 @@ export function GET(request: NextRequest) {
       start_time: r.start_time,
       duration: r.duration,
       note: r.note,
+      location: r.location,
+      link: r.link,
       recurring: 1,
       repeat_type: r.repeat_type,
       repeat_interval: r.repeat_interval,
@@ -58,6 +60,8 @@ export function POST(request: NextRequest) {
       start_time,
       duration,
       note,
+      location,
+      link,
       repeat_type,
       repeat_interval,
       repeat_days,
@@ -75,13 +79,15 @@ export function POST(request: NextRequest) {
     if (repeat_type) {
       const result = db
         .prepare(
-          "INSERT INTO recurring_blocks (title, start_time, duration, note, repeat_type, repeat_interval, repeat_days, repeat_start) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+          "INSERT INTO recurring_blocks (title, start_time, duration, note, location, link, repeat_type, repeat_interval, repeat_days, repeat_start) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
         )
         .run(
           title,
           start_time || null,
           duration,
           note || "",
+          location || "",
+          link || "",
           repeat_type,
           repeat_interval || 1,
           repeat_type === "weekly" && repeat_days
@@ -103,9 +109,9 @@ export function POST(request: NextRequest) {
     }
     const result = db
       .prepare(
-        "INSERT INTO time_blocks (title, date, start_time, duration, note) VALUES (?, ?, ?, ?, ?)"
+        "INSERT INTO time_blocks (title, date, start_time, duration, note, location, link) VALUES (?, ?, ?, ?, ?, ?, ?)"
       )
-      .run(title, date, start_time || null, duration, note || "");
+      .run(title, date, start_time || null, duration, note || "", location || "", link || "");
     const block = db
       .prepare("SELECT * FROM time_blocks WHERE id = ?")
       .get(result.lastInsertRowid);
