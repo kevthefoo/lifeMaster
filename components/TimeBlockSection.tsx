@@ -61,9 +61,9 @@ export default function TimeBlockSection({
   }
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+    <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5 shadow-sm">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">Time Blocks</h2>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Time Blocks</h2>
         <button
           onClick={() => setShowForm(!showForm)}
           className="rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
@@ -73,13 +73,13 @@ export default function TimeBlockSection({
       </div>
 
       {showForm && (
-        <form onSubmit={handleAdd} className="mb-4 space-y-2 rounded-lg bg-gray-50 p-3">
+        <form onSubmit={handleAdd} className="mb-4 space-y-2 rounded-lg bg-gray-50 dark:bg-gray-800 p-3">
           <input
             type="text"
             placeholder="Block title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-200"
             required
           />
           <div className="flex gap-2">
@@ -87,7 +87,7 @@ export default function TimeBlockSection({
               type="time"
               value={startTime}
               onChange={(e) => setStartTime(e.target.value)}
-              className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-200"
               placeholder="Start (optional)"
             />
             <input
@@ -95,7 +95,7 @@ export default function TimeBlockSection({
               placeholder="Duration (min)"
               value={duration}
               onChange={(e) => setDuration(e.target.value)}
-              className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-200"
               required
               min="1"
             />
@@ -105,7 +105,7 @@ export default function TimeBlockSection({
             placeholder="Note (optional)"
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-200"
           />
           <button
             type="submit"
@@ -117,33 +117,33 @@ export default function TimeBlockSection({
       )}
 
       {blocks.length === 0 ? (
-        <p className="text-sm text-gray-400">No time blocks for this day.</p>
+        <p className="text-sm text-gray-400 dark:text-gray-500">No time blocks for this day.</p>
       ) : (
         <ul className="space-y-2">
           {blocks.map((block) => (
             <li
               key={block.id}
-              className="group flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50 px-4 py-3"
+              className="group flex items-center justify-between rounded-lg border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-4 py-3"
             >
               <div>
                 <div className="flex items-center gap-2">
                   {block.start_time && (
-                    <span className="text-sm font-medium text-blue-600">
+                    <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
                       {block.start_time}
                     </span>
                   )}
-                  <span className="font-medium text-gray-900">{block.title}</span>
-                  <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-700">
+                  <span className="font-medium text-gray-900 dark:text-gray-100">{block.title}</span>
+                  <span className="rounded-full bg-blue-100 dark:bg-blue-900/50 px-2 py-0.5 text-xs text-blue-700 dark:text-blue-300">
                     {formatDuration(block.duration)}
                   </span>
                 </div>
                 {block.note && (
-                  <p className="mt-1 text-xs text-gray-500">{block.note}</p>
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{block.note}</p>
                 )}
               </div>
               <button
                 onClick={() => handleDelete(block.id)}
-                className="text-gray-300 opacity-0 transition hover:text-red-500 group-hover:opacity-100"
+                className="text-gray-300 dark:text-gray-600 opacity-0 transition hover:text-red-500 group-hover:opacity-100"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />

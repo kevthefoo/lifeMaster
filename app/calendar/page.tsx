@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import ThemeToggle from "@/components/ThemeToggle";
 
 interface DayData {
   events: number;
@@ -76,43 +77,44 @@ export default function CalendarPage() {
   }
 
   return (
-    <div className="flex h-screen flex-col bg-gray-50">
+    <div className="flex h-screen flex-col bg-gray-50 dark:bg-gray-950">
       {/* Header */}
-      <header className="shrink-0 border-b border-gray-200 bg-white">
+      <header className="shrink-0 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
         <div className="flex items-center justify-between px-6 py-3">
           <div className="flex items-center gap-4">
-            <Link href="/" className="text-sm text-gray-500 hover:text-gray-700">
+            <Link href="/" className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
               &larr; Schedule
             </Link>
-            <h1 className="text-xl font-bold text-gray-900">Calendar</h1>
-            <Link href="/bomb" className="text-sm text-gray-500 hover:text-gray-700">
+            <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Calendar</h1>
+            <Link href="/bomb" className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
               Bombs
             </Link>
           </div>
           <div className="flex items-center gap-3">
             <button
               onClick={() => shiftMonth(-1)}
-              className="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm hover:bg-gray-50"
+              className="rounded-md border border-gray-300 dark:border-gray-600 px-2.5 py-1.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 dark:text-gray-300"
             >
               &larr;
             </button>
             <div className="text-center min-w-[160px]">
-              <span className="text-sm font-medium text-gray-900">{displayMonth}</span>
+              <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{displayMonth}</span>
             </div>
             <button
               onClick={() => shiftMonth(1)}
-              className="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm hover:bg-gray-50"
+              className="rounded-md border border-gray-300 dark:border-gray-600 px-2.5 py-1.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 dark:text-gray-300"
             >
               &rarr;
             </button>
             {(year !== new Date().getFullYear() || month !== new Date().getMonth()) && (
               <button
                 onClick={goToday}
-                className="text-xs text-blue-600 hover:underline ml-1"
+                className="text-xs text-blue-600 dark:text-blue-400 hover:underline ml-1"
               >
                 Today
               </button>
             )}
+            <ThemeToggle />
           </div>
         </div>
       </header>
@@ -125,7 +127,7 @@ export default function CalendarPage() {
             {WEEKDAYS.map((day) => (
               <div
                 key={day}
-                className="text-center text-xs font-medium text-gray-500 py-2"
+                className="text-center text-xs font-medium text-gray-500 dark:text-gray-400 py-2"
               >
                 {day}
               </div>
@@ -133,13 +135,13 @@ export default function CalendarPage() {
           </div>
 
           {/* Date cells */}
-          <div className="grid grid-cols-7 border-t border-l border-gray-200">
+          <div className="grid grid-cols-7 border-t border-l border-gray-200 dark:border-gray-700">
             {cells.map((day, i) => {
               if (day === null) {
                 return (
                   <div
                     key={`empty-${i}`}
-                    className="border-r border-b border-gray-200 bg-gray-50/50 min-h-[90px]"
+                    className="border-r border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/50 min-h-[90px]"
                   />
                 );
               }
@@ -155,15 +157,15 @@ export default function CalendarPage() {
                 <Link
                   key={day}
                   href={`/?date=${ds}`}
-                  className={`border-r border-b border-gray-200 min-h-[90px] p-2 hover:bg-blue-50/50 transition flex flex-col ${
-                    isToday ? "bg-blue-50" : "bg-white"
+                  className={`border-r border-b border-gray-200 dark:border-gray-700 min-h-[90px] p-2 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition flex flex-col ${
+                    isToday ? "bg-blue-50 dark:bg-blue-900/30" : "bg-white dark:bg-gray-900"
                   }`}
                 >
                   <span
                     className={`text-sm font-medium inline-flex items-center justify-center h-6 w-6 rounded-full ${
                       isToday
                         ? "bg-blue-600 text-white"
-                        : "text-gray-700"
+                        : "text-gray-700 dark:text-gray-300"
                     }`}
                   >
                     {day}
@@ -193,7 +195,7 @@ export default function CalendarPage() {
           </div>
 
           {/* Legend */}
-          <div className="flex gap-6 mt-4 text-xs text-gray-500">
+          <div className="flex gap-6 mt-4 text-xs text-gray-500 dark:text-gray-400">
             <div className="flex items-center gap-1.5">
               <span className="inline-block h-2 w-2 rounded-full bg-green-500" />
               Scheduled events

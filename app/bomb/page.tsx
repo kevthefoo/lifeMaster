@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import ThemeToggle from "@/components/ThemeToggle";
 
 interface Bomb {
   id: number;
@@ -15,9 +16,9 @@ interface Bomb {
 }
 
 const PRIORITY_BADGES: Record<string, string> = {
-  high: "bg-red-100 text-red-700",
-  medium: "bg-yellow-100 text-yellow-700",
-  low: "bg-green-100 text-green-700",
+  high: "bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300",
+  medium: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-300",
+  low: "bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300",
 };
 
 type SortMode = "deadline" | "priority";
@@ -42,14 +43,14 @@ function formatCountdown(ms: number): string {
 }
 
 function getUrgencyClasses(ms: number, status: string): string {
-  if (status === "exploded") return "bg-gray-100 border-gray-400 text-gray-500";
-  if (status === "defused") return "bg-green-50 border-green-400 text-green-800";
+  if (status === "exploded") return "bg-gray-100 border-gray-400 text-gray-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400";
+  if (status === "defused") return "bg-green-50 border-green-400 text-green-800 dark:bg-green-900/30 dark:border-green-600 dark:text-green-300";
   const days = ms / 86400000;
-  if (days < 0) return "bg-gray-100 border-gray-400 text-gray-500";
-  if (days < 1) return "bg-red-50 border-red-500 text-red-900 animate-pulse";
-  if (days < 3) return "bg-orange-50 border-orange-400 text-orange-900";
-  if (days < 7) return "bg-yellow-50 border-yellow-400 text-yellow-900";
-  return "bg-blue-50 border-blue-400 text-blue-900";
+  if (days < 0) return "bg-gray-100 border-gray-400 text-gray-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400";
+  if (days < 1) return "bg-red-50 border-red-500 text-red-900 animate-pulse dark:bg-red-900/30 dark:text-red-200";
+  if (days < 3) return "bg-orange-50 border-orange-400 text-orange-900 dark:bg-orange-900/30 dark:border-orange-500 dark:text-orange-200";
+  if (days < 7) return "bg-yellow-50 border-yellow-400 text-yellow-900 dark:bg-yellow-900/30 dark:border-yellow-500 dark:text-yellow-200";
+  return "bg-blue-50 border-blue-400 text-blue-900 dark:bg-blue-900/30 dark:border-blue-500 dark:text-blue-200";
 }
 
 export default function BombPage() {
@@ -179,39 +180,42 @@ export default function BombPage() {
   }
 
   return (
-    <div className="flex h-screen flex-col bg-gray-50">
+    <div className="flex h-screen flex-col bg-gray-50 dark:bg-gray-950">
       {/* Header */}
-      <header className="shrink-0 border-b border-gray-200 bg-white">
+      <header className="shrink-0 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
         <div className="flex items-center justify-between px-6 py-3">
           <div className="flex items-center gap-4">
-            <Link href="/" className="text-sm text-gray-500 hover:text-gray-700">
+            <Link href="/" className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
               &larr; Schedule
             </Link>
-            <h1 className="text-xl font-bold text-gray-900">Bombs</h1>
-            <Link href="/task" className="text-sm text-gray-500 hover:text-gray-700">
+            <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Bombs</h1>
+            <Link href="/task" className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
               Tasks
             </Link>
-            <Link href="/calendar" className="text-sm text-gray-500 hover:text-gray-700">
+            <Link href="/calendar" className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
               Calendar
             </Link>
           </div>
-          <button
-            onClick={() => setShowForm(!showForm)}
-            className="rounded-lg bg-red-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-red-700"
-          >
-            {showForm ? "Cancel" : "Plant Bomb"}
-          </button>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <button
+              onClick={() => setShowForm(!showForm)}
+              className="rounded-lg bg-red-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-red-700"
+            >
+              {showForm ? "Cancel" : "Plant Bomb"}
+            </button>
+          </div>
         </div>
       </header>
 
       {/* Controls */}
-      <div className="shrink-0 border-b border-gray-200 bg-white px-6 py-2 flex items-center gap-4">
+      <div className="shrink-0 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-6 py-2 flex items-center gap-4">
         <div className="flex items-center gap-2 text-sm">
-          <span className="text-gray-500">Sort:</span>
+          <span className="text-gray-500 dark:text-gray-400">Sort:</span>
           <button
             onClick={() => setSortMode("deadline")}
             className={`rounded-md px-2.5 py-1 text-xs font-medium ${
-              sortMode === "deadline" ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              sortMode === "deadline" ? "bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900" : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
             }`}
           >
             Deadline
@@ -219,20 +223,20 @@ export default function BombPage() {
           <button
             onClick={() => setSortMode("priority")}
             className={`rounded-md px-2.5 py-1 text-xs font-medium ${
-              sortMode === "priority" ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              sortMode === "priority" ? "bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900" : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
             }`}
           >
             Priority
           </button>
         </div>
         <div className="flex items-center gap-2 text-sm">
-          <span className="text-gray-500">Filter:</span>
+          <span className="text-gray-500 dark:text-gray-400">Filter:</span>
           {(["active", "all", "defused", "exploded"] as FilterMode[]).map((f) => (
             <button
               key={f}
               onClick={() => setFilterMode(f)}
               className={`rounded-md px-2.5 py-1 text-xs font-medium capitalize ${
-                filterMode === f ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                filterMode === f ? "bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900" : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
               }`}
             >
               {f}
@@ -245,7 +249,7 @@ export default function BombPage() {
       <div className="flex-1 overflow-y-auto p-6">
         <div className="mx-auto max-w-2xl space-y-3">
           {sorted.length === 0 && (
-            <p className="text-center text-sm text-gray-400 py-12">No bombs found. Plant one!</p>
+            <p className="text-center text-sm text-gray-400 dark:text-gray-500 py-12">No bombs found. Plant one!</p>
           )}
           {sorted.map((bomb) => {
             const remaining = getTimeRemaining(bomb.deadline, bomb.deadline_time);
@@ -254,13 +258,13 @@ export default function BombPage() {
               <div
                 key={bomb.id}
                 onClick={() => openEdit(bomb)}
-                className={`flex items-center gap-4 rounded-xl border-l-4 px-4 py-3 cursor-pointer hover:brightness-95 transition ${urgency}`}
+                className={`flex items-center gap-4 rounded-xl border-l-4 px-4 py-3 cursor-pointer hover:brightness-95 dark:hover:brightness-110 transition ${urgency}`}
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span
                       className={`text-sm font-semibold truncate ${
-                        bomb.status === "defused" ? "line-through text-green-600" : ""
+                        bomb.status === "defused" ? "line-through text-green-600 dark:text-green-400" : ""
                       }`}
                     >
                       {bomb.status === "exploded" && "💥 "}
@@ -272,7 +276,7 @@ export default function BombPage() {
                       {bomb.priority}
                     </span>
                   </div>
-                  <div className="mt-1 flex items-center gap-3 text-xs text-gray-500">
+                  <div className="mt-1 flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
                     <span>
                       {new Date(bomb.deadline + "T00:00:00").toLocaleDateString()}
                       {bomb.deadline_time && ` at ${bomb.deadline_time}`}
@@ -281,7 +285,7 @@ export default function BombPage() {
                   </div>
                 </div>
                 <div className="shrink-0 text-right">
-                  <div className={`text-sm font-bold ${bomb.status === "active" && remaining > 0 ? "text-gray-900" : ""}`}>
+                  <div className={`text-sm font-bold ${bomb.status === "active" && remaining > 0 ? "text-gray-900 dark:text-gray-100" : ""}`}>
                     {bomb.status === "active" ? formatCountdown(remaining) : bomb.status.toUpperCase()}
                   </div>
                   {bomb.status === "active" && (
@@ -305,15 +309,15 @@ export default function BombPage() {
       {/* Add form modal */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Plant a Bomb</h3>
+          <div className="w-full max-w-md rounded-xl bg-white dark:bg-gray-800 p-6 shadow-xl">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Plant a Bomb</h3>
             <form onSubmit={handleAdd} className="space-y-3">
               <input
                 type="text"
                 placeholder="Bomb title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-200"
                 required
                 autoFocus
               />
@@ -322,21 +326,21 @@ export default function BombPage() {
                   type="date"
                   value={deadline}
                   onChange={(e) => setDeadline(e.target.value)}
-                  className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm"
+                  className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-200"
                   required
                 />
                 <input
                   type="time"
                   value={deadlineTime}
                   onChange={(e) => setDeadlineTime(e.target.value)}
-                  className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm"
+                  className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-200"
                   placeholder="Time (optional)"
                 />
               </div>
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value)}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-200"
               >
                 <option value="high">High Priority</option>
                 <option value="medium">Medium Priority</option>
@@ -346,14 +350,14 @@ export default function BombPage() {
                 placeholder="Note (optional)"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm resize-none"
+                className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm resize-none dark:bg-gray-700 dark:text-gray-200"
                 rows={2}
               />
               <div className="flex gap-2 justify-end">
                 <button
                   type="button"
                   onClick={() => setShowForm(false)}
-                  className="rounded-md border border-gray-300 px-4 py-2 text-sm hover:bg-gray-50"
+                  className="rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-300"
                 >
                   Cancel
                 </button>
@@ -372,13 +376,13 @@ export default function BombPage() {
       {/* Edit modal */}
       {editTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">Edit Bomb</h3>
+          <div className="w-full max-w-md rounded-xl bg-white dark:bg-gray-800 p-6 shadow-xl space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Edit Bomb</h3>
             <input
               type="text"
               value={editTitle}
               onChange={(e) => setEditTitle(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-200"
               placeholder="Title"
             />
             <div className="flex gap-3">
@@ -386,20 +390,20 @@ export default function BombPage() {
                 type="date"
                 value={editDeadline}
                 onChange={(e) => setEditDeadline(e.target.value)}
-                className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm"
+                className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-200"
                 required
               />
               <input
                 type="time"
                 value={editDeadlineTime}
                 onChange={(e) => setEditDeadlineTime(e.target.value)}
-                className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm"
+                className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-200"
               />
             </div>
             <select
               value={editPriority}
               onChange={(e) => setEditPriority(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-200"
             >
               <option value="high">High Priority</option>
               <option value="medium">Medium Priority</option>
@@ -408,14 +412,14 @@ export default function BombPage() {
             <textarea
               value={editNote}
               onChange={(e) => setEditNote(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm resize-none"
+              className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm resize-none dark:bg-gray-700 dark:text-gray-200"
               rows={2}
               placeholder="Note"
             />
             <div className="flex gap-2 justify-end">
               <button
                 onClick={() => setEditTarget(null)}
-                className="rounded-md border border-gray-300 px-4 py-2 text-sm hover:bg-gray-50"
+                className="rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-300"
               >
                 Cancel
               </button>
@@ -439,15 +443,15 @@ export default function BombPage() {
       {/* Delete confirmation modal */}
       {deleteTarget && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40">
-          <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Delete Bomb</h3>
-            <p className="text-sm text-gray-600 mb-4">
+          <div className="w-full max-w-sm rounded-xl bg-white dark:bg-gray-800 p-6 shadow-xl">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Delete Bomb</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
               Are you sure you want to delete &quot;{deleteTarget.title}&quot;?
             </p>
             <div className="flex gap-2 justify-end">
               <button
                 onClick={() => setDeleteTarget(null)}
-                className="rounded-md border border-gray-300 px-4 py-2 text-sm hover:bg-gray-50"
+                className="rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-300"
               >
                 Cancel
               </button>

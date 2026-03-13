@@ -27,9 +27,8 @@ export function getDb(): Database.Database {
     CREATE TABLE IF NOT EXISTS tasks (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       title TEXT NOT NULL,
-      list_type TEXT NOT NULL CHECK(list_type IN ('daily', 'weekly', 'monthly')),
+      list_type TEXT NOT NULL DEFAULT 'pool',
       priority TEXT NOT NULL DEFAULT 'medium' CHECK(priority IN ('low', 'medium', 'high')),
-      deadline TEXT,
       status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending', 'completed')),
       note TEXT DEFAULT '',
       created_at TEXT DEFAULT (datetime('now'))
@@ -38,8 +37,9 @@ export function getDb(): Database.Database {
     CREATE TABLE IF NOT EXISTS habits (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       title TEXT NOT NULL,
-      target_value REAL NOT NULL,
-      unit TEXT NOT NULL,
+      habit_type TEXT NOT NULL DEFAULT 'checkbox' CHECK(habit_type IN ('checkbox', 'measurable')),
+      target_value REAL NOT NULL DEFAULT 1,
+      unit TEXT NOT NULL DEFAULT '',
       created_at TEXT DEFAULT (datetime('now'))
     );
 
@@ -78,6 +78,34 @@ export function getDb(): Database.Database {
       created_at TEXT DEFAULT (datetime('now'))
     );
   `);
+
+  // Migrate tasks table: remove list_type constraint and deadline column
+  const taskCols = db.prepare("PRAGMA table_info(tasks)").all() as { name: string }[];
+  const taskColNames = taskCols.map((c) => c.name);
+  if (taskColNames.includes("deadline")) {
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS tasks_new (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        list_type TEXT NOT NULL DEFAULT 'pool',
+        priority TEXT NOT NULL DEFAULT 'medium' CHECK(priority IN ('low', 'medium', 'high')),
+        status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending', 'completed')),
+        note TEXT DEFAULT '',
+        created_at TEXT DEFAULT (datetime('now'))
+      );
+      INSERT INTO tasks_new (id, title, list_type, priority, status, note, created_at)
+        SELECT id, title, 'pool', priority, status, note, created_at FROM tasks;
+      DROP TABLE tasks;
+      ALTER TABLE tasks_new RENAME TO tasks;
+    `);
+  }
+
+  // Migrate habits table: add habit_type column for existing databases
+  const habitCols = db.prepare("PRAGMA table_info(habits)").all() as { name: string }[];
+  const habitColNames = habitCols.map((c) => c.name);
+  if (!habitColNames.includes("habit_type")) {
+    db.exec("ALTER TABLE habits ADD COLUMN habit_type TEXT NOT NULL DEFAULT 'measurable'");
+  }
 
   // Add location and link columns if missing (migration for existing databases)
   const timeBlockCols = db.prepare("PRAGMA table_info(time_blocks)").all() as { name: string }[];

@@ -30,21 +30,21 @@ const HOURS_PER_PAGE = 8;
 const PAGE_LABELS = ["12 AM – 8 AM", "8 AM – 4 PM", "4 PM – 12 AM"];
 
 const BLOCK_COLORS = [
-  "bg-blue-100 border-blue-400 text-blue-900",
-  "bg-purple-100 border-purple-400 text-purple-900",
-  "bg-emerald-100 border-emerald-400 text-emerald-900",
-  "bg-amber-100 border-amber-400 text-amber-900",
-  "bg-rose-100 border-rose-400 text-rose-900",
-  "bg-cyan-100 border-cyan-400 text-cyan-900",
-  "bg-indigo-100 border-indigo-400 text-indigo-900",
+  "bg-blue-100 border-blue-400 text-blue-900 dark:bg-blue-900/40 dark:border-blue-500 dark:text-blue-200",
+  "bg-purple-100 border-purple-400 text-purple-900 dark:bg-purple-900/40 dark:border-purple-500 dark:text-purple-200",
+  "bg-emerald-100 border-emerald-400 text-emerald-900 dark:bg-emerald-900/40 dark:border-emerald-500 dark:text-emerald-200",
+  "bg-amber-100 border-amber-400 text-amber-900 dark:bg-amber-900/40 dark:border-amber-500 dark:text-amber-200",
+  "bg-rose-100 border-rose-400 text-rose-900 dark:bg-rose-900/40 dark:border-rose-500 dark:text-rose-200",
+  "bg-cyan-100 border-cyan-400 text-cyan-900 dark:bg-cyan-900/40 dark:border-cyan-500 dark:text-cyan-200",
+  "bg-indigo-100 border-indigo-400 text-indigo-900 dark:bg-indigo-900/40 dark:border-indigo-500 dark:text-indigo-200",
 ];
 
 const RECURRING_COLORS = [
-  "bg-blue-50 border-blue-300 text-blue-800 border-dashed",
-  "bg-purple-50 border-purple-300 text-purple-800 border-dashed",
-  "bg-emerald-50 border-emerald-300 text-emerald-800 border-dashed",
-  "bg-amber-50 border-amber-300 text-amber-800 border-dashed",
-  "bg-rose-50 border-rose-300 text-rose-800 border-dashed",
+  "bg-blue-50 border-blue-300 text-blue-800 border-dashed dark:bg-blue-950/40 dark:border-blue-600 dark:text-blue-300",
+  "bg-purple-50 border-purple-300 text-purple-800 border-dashed dark:bg-purple-950/40 dark:border-purple-600 dark:text-purple-300",
+  "bg-emerald-50 border-emerald-300 text-emerald-800 border-dashed dark:bg-emerald-950/40 dark:border-emerald-600 dark:text-emerald-300",
+  "bg-amber-50 border-amber-300 text-amber-800 border-dashed dark:bg-amber-950/40 dark:border-amber-600 dark:text-amber-300",
+  "bg-rose-50 border-rose-300 text-rose-800 border-dashed dark:bg-rose-950/40 dark:border-rose-600 dark:text-rose-300",
 ];
 
 const DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -274,9 +274,9 @@ export default function DayTimeline({
       {/* Delete confirm modal */}
       {deleteTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="mx-4 w-full max-w-sm rounded-xl bg-white p-6 shadow-2xl">
-            <h3 className="text-base font-semibold text-gray-900">Delete block</h3>
-            <p className="mt-2 text-sm text-gray-600">
+          <div className="mx-4 w-full max-w-sm rounded-xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
+            <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">Delete block</h3>
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
               {deleteTarget.recurring
                 ? <>Are you sure you want to delete <span className="font-medium">&ldquo;{deleteTarget.title}&rdquo;</span>? This will remove <span className="font-medium">all occurrences</span>.</>
                 : <>Are you sure you want to delete <span className="font-medium">&ldquo;{deleteTarget.title}&rdquo;</span>?</>
@@ -285,7 +285,7 @@ export default function DayTimeline({
             <div className="mt-5 flex gap-3 justify-end">
               <button
                 onClick={() => setDeleteTarget(null)}
-                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
               >
                 Cancel
               </button>
@@ -303,14 +303,14 @@ export default function DayTimeline({
       {/* Edit modal */}
       {editTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <form onSubmit={handleEditSave} className="mx-4 w-full max-w-md rounded-xl bg-white p-6 shadow-2xl space-y-3">
-            <h3 className="text-base font-semibold text-gray-900">Edit block</h3>
+          <form onSubmit={handleEditSave} className="mx-4 w-full max-w-md rounded-xl bg-white dark:bg-gray-800 p-6 shadow-2xl space-y-3">
+            <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">Edit block</h3>
             <input
               type="text"
               value={editTitle}
               onChange={(e) => setEditTitle(e.target.value)}
               placeholder="Title"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-200"
               required
             />
             <div className="flex items-center gap-2">
@@ -318,7 +318,7 @@ export default function DayTimeline({
                 type="time"
                 value={editStartTime}
                 onChange={(e) => setEditStartTime(e.target.value)}
-                className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm"
+                className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-200"
                 required
               />
               <span className="text-sm text-gray-400">to</span>
@@ -326,7 +326,7 @@ export default function DayTimeline({
                 type="time"
                 value={editEndTime}
                 onChange={(e) => setEditEndTime(e.target.value)}
-                className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm"
+                className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-200"
                 required
               />
             </div>
@@ -335,7 +335,7 @@ export default function DayTimeline({
               onChange={(e) => setEditNote(e.target.value)}
               placeholder="Description"
               rows={2}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm resize-none"
+              className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm resize-none dark:bg-gray-700 dark:text-gray-200"
             />
             <div className="flex gap-2">
               <input
@@ -343,31 +343,31 @@ export default function DayTimeline({
                 value={editLocation}
                 onChange={(e) => setEditLocation(e.target.value)}
                 placeholder="Location (optional)"
-                className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm"
+                className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-200"
               />
               <input
                 type="url"
                 value={editLink}
                 onChange={(e) => setEditLink(e.target.value)}
                 placeholder="Link (optional)"
-                className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm"
+                className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-200"
               />
             </div>
             {editTarget.recurring === 1 && (
-              <p className="text-xs text-amber-600">This will update all occurrences of this recurring block.</p>
+              <p className="text-xs text-amber-600 dark:text-amber-400">This will update all occurrences of this recurring block.</p>
             )}
             <div className="flex gap-3 justify-end">
               <button
                 type="button"
                 onClick={() => setEditTarget(null)}
-                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={() => { setEditTarget(null); requestDelete(editTarget); }}
-                className="rounded-lg border border-red-300 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+                className="rounded-lg border border-red-300 dark:border-red-600 px-4 py-2 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30"
               >
                 Delete
               </button>
@@ -383,8 +383,8 @@ export default function DayTimeline({
       )}
 
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3">
-        <h2 className="text-lg font-semibold text-gray-900">Schedule</h2>
+      <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-4 py-3">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Schedule</h2>
         <button
           onClick={() => setShowForm(!showForm)}
           className="rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
@@ -395,21 +395,21 @@ export default function DayTimeline({
 
       {/* Add form */}
       {showForm && (
-        <form onSubmit={handleAdd} className="border-b border-gray-200 bg-gray-50 p-4 space-y-3">
+        <form onSubmit={handleAdd} className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4 space-y-3">
           <div className="flex flex-wrap gap-2">
             <input
               type="text"
               placeholder="Title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="flex-1 min-w-[150px] rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="flex-1 min-w-[150px] rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-200"
               required
             />
             <input
               type="time"
               value={startTime}
               onChange={(e) => setStartTime(e.target.value)}
-              className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-200"
               required
             />
             <span className="text-sm text-gray-400 self-center">to</span>
@@ -417,7 +417,7 @@ export default function DayTimeline({
               type="time"
               value={endTime}
               onChange={(e) => setEndTime(e.target.value)}
-              className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-200"
               required
             />
           </div>
@@ -427,7 +427,7 @@ export default function DayTimeline({
             value={note}
             onChange={(e) => setNote(e.target.value)}
             rows={2}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm resize-none"
+            className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm resize-none dark:bg-gray-700 dark:text-gray-200"
           />
           <div className="flex gap-2">
             <input
@@ -435,25 +435,25 @@ export default function DayTimeline({
               placeholder="Location (optional)"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-200"
             />
             <input
               type="url"
               placeholder="Link (optional)"
               value={link}
               onChange={(e) => setLink(e.target.value)}
-              className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-200"
             />
           </div>
 
           {/* Repeat toggle */}
           <div>
-            <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+            <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 cursor-pointer">
               <input
                 type="checkbox"
                 checked={isRecurring}
                 onChange={(e) => setIsRecurring(e.target.checked)}
-                className="rounded border-gray-300"
+                className="rounded border-gray-300 dark:border-gray-600"
               />
               Repeat
             </label>
@@ -461,18 +461,18 @@ export default function DayTimeline({
             {isRecurring && (
               <div className="mt-2 space-y-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600">Every</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Every</span>
                   <input
                     type="number"
                     value={repeatInterval}
                     onChange={(e) => setRepeatInterval(e.target.value)}
                     min="1"
-                    className="w-16 rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+                    className="w-16 rounded-md border border-gray-300 dark:border-gray-600 px-2 py-1.5 text-sm dark:bg-gray-700 dark:text-gray-200"
                   />
                   <select
                     value={repeatType}
                     onChange={(e) => setRepeatType(e.target.value as "daily" | "weekly" | "monthly" | "yearly")}
-                    className="rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+                    className="rounded-md border border-gray-300 dark:border-gray-600 px-2 py-1.5 text-sm dark:bg-gray-700 dark:text-gray-200"
                   >
                     <option value="daily">{parseInt(repeatInterval) === 1 ? "day" : "days"}</option>
                     <option value="weekly">{parseInt(repeatInterval) === 1 ? "week" : "weeks"}</option>
@@ -491,7 +491,7 @@ export default function DayTimeline({
                         className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
                           repeatDays.includes(i)
                             ? "bg-blue-600 text-white"
-                            : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                            : "bg-gray-200 text-gray-600 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
                         }`}
                       >
                         {label}
@@ -501,7 +501,7 @@ export default function DayTimeline({
                 )}
 
                 {repeatType !== "weekly" && (
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
                     Starting from the currently selected date
                   </p>
                 )}
@@ -520,13 +520,13 @@ export default function DayTimeline({
 
       {/* Unscheduled blocks */}
       {unscheduledBlocks.length > 0 && (
-        <div className="border-b border-gray-200 bg-gray-50 px-4 py-2">
-          <div className="text-xs font-medium text-gray-500 mb-1">Unscheduled</div>
+        <div className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-4 py-2">
+          <div className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Unscheduled</div>
           <div className="flex flex-wrap gap-1">
             {unscheduledBlocks.map((block) => (
               <span
                 key={block.id}
-                className="group inline-flex items-center gap-1 rounded-md bg-gray-200 px-2 py-1 text-xs text-gray-700"
+                className="group inline-flex items-center gap-1 rounded-md bg-gray-200 dark:bg-gray-700 px-2 py-1 text-xs text-gray-700 dark:text-gray-300"
               >
                 {block.title} ({block.duration}m)
                 <button
@@ -542,19 +542,19 @@ export default function DayTimeline({
       )}
 
       {/* Timeline pagination */}
-      <div className="flex items-center justify-between border-b border-gray-200 px-4 py-2">
+      <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-4 py-2">
         <button
           onClick={() => setPage((p) => Math.max(0, p - 1))}
           disabled={page === 0}
-          className="rounded-md border border-gray-300 px-2.5 py-1 text-sm hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed"
+          className="rounded-md border border-gray-300 dark:border-gray-600 px-2.5 py-1 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed dark:text-gray-300"
         >
           &larr;
         </button>
-        <span className="text-sm font-medium text-gray-600">{PAGE_LABELS[page]}</span>
+        <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{PAGE_LABELS[page]}</span>
         <button
           onClick={() => setPage((p) => Math.min(2, p + 1))}
           disabled={page === 2}
-          className="rounded-md border border-gray-300 px-2.5 py-1 text-sm hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed"
+          className="rounded-md border border-gray-300 dark:border-gray-600 px-2.5 py-1 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed dark:text-gray-300"
         >
           &rarr;
         </button>
@@ -567,10 +567,10 @@ export default function DayTimeline({
           {pageHours.map((hour, idx) => (
             <div
               key={hour}
-              className="absolute left-0 right-0 border-t border-gray-100"
+              className="absolute left-0 right-0 border-t border-gray-100 dark:border-gray-800"
               style={{ top: 16 + idx * HOUR_HEIGHT }}
             >
-              <span className="absolute -top-3 left-2 text-xs text-gray-400 bg-white pr-2">
+              <span className="absolute -top-3 left-2 text-xs text-gray-400 dark:text-gray-500 bg-white dark:bg-gray-900 pr-2">
                 {formatHour(hour)}
               </span>
             </div>
@@ -611,7 +611,7 @@ export default function DayTimeline({
                 <div
                   key={block.id}
                   onClick={() => openEdit(block)}
-                  className={`absolute left-16 right-3 z-10 rounded-md border-l-4 px-3 py-1 cursor-pointer hover:brightness-95 transition group overflow-hidden ${colorClass}`}
+                  className={`absolute left-16 right-3 z-10 rounded-md border-l-4 px-3 py-1 cursor-pointer hover:brightness-95 dark:hover:brightness-110 transition group overflow-hidden ${colorClass}`}
                   style={{ top, height }}
                 >
                   <div className="min-w-0">
@@ -663,7 +663,7 @@ export default function DayTimeline({
               return (
                 <div
                   key={`bomb-${bomb.id}`}
-                  className="absolute left-16 right-3 z-10 rounded-md border-l-4 px-3 py-1 overflow-hidden border-red-500 bg-red-100 text-red-900"
+                  className="absolute left-16 right-3 z-10 rounded-md border-l-4 px-3 py-1 overflow-hidden border-red-500 bg-red-100 text-red-900 dark:bg-red-900/40 dark:text-red-200"
                   style={{ top, height }}
                 >
                   <div className="min-w-0">

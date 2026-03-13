@@ -9,7 +9,7 @@ export function GET(request: NextRequest) {
   const db = getDb();
   const logs = db
     .prepare(
-      `SELECT h.id as habit_id, h.title, h.target_value, h.unit,
+      `SELECT h.id as habit_id, h.title, h.habit_type, h.target_value, h.unit,
               COALESCE(hl.value, 0) as current_value, hl.id as log_id
        FROM habits h
        LEFT JOIN habit_logs hl ON h.id = hl.habit_id AND hl.date = ?
@@ -32,7 +32,7 @@ export function POST(request: NextRequest) {
     ).run(habit_id, date, value, value);
     const log = db
       .prepare(
-        `SELECT h.id as habit_id, h.title, h.target_value, h.unit,
+        `SELECT h.id as habit_id, h.title, h.habit_type, h.target_value, h.unit,
                 COALESCE(hl.value, 0) as current_value, hl.id as log_id
          FROM habits h
          LEFT JOIN habit_logs hl ON h.id = hl.habit_id AND hl.date = ?

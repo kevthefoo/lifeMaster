@@ -6,11 +6,11 @@ type Params = { params: Promise<{ id: string }> };
 export async function PUT(request: NextRequest, { params }: Params) {
   const { id } = await params;
   const body = await request.json();
-  const { title, list_type, priority, deadline, status, note } = body;
+  const { title, priority, status, note } = body;
   const db = getDb();
   db.prepare(
-    "UPDATE tasks SET title = COALESCE(?, title), list_type = COALESCE(?, list_type), priority = COALESCE(?, priority), deadline = ?, status = COALESCE(?, status), note = COALESCE(?, note) WHERE id = ?"
-  ).run(title, list_type, priority, deadline ?? null, status, note, id);
+    "UPDATE tasks SET title = COALESCE(?, title), priority = COALESCE(?, priority), status = COALESCE(?, status), note = COALESCE(?, note) WHERE id = ?"
+  ).run(title, priority, status, note, id);
   const task = db.prepare("SELECT * FROM tasks WHERE id = ?").get(id);
   if (!task) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json(task);

@@ -5,6 +5,7 @@ import Link from "next/link";
 import DayTimeline from "@/components/DayTimeline";
 import TaskSection from "@/components/TaskSection";
 import HabitSection from "@/components/HabitSection";
+import ThemeToggle from "@/components/ThemeToggle";
 
 function todayStr() {
   const d = new Date();
@@ -53,39 +54,39 @@ export default function Dashboard() {
   const isToday = date === todayStr();
 
   if (!mounted) {
-    return <div className="flex h-screen items-center justify-center bg-gray-50"><span className="text-gray-400">Loading...</span></div>;
+    return <div className="flex h-screen items-center justify-center bg-gray-50 dark:bg-gray-950"><span className="text-gray-400 dark:text-gray-500">Loading...</span></div>;
   }
 
   return (
-    <div className="flex h-screen flex-col bg-gray-50">
+    <div className="flex h-screen flex-col bg-gray-50 dark:bg-gray-950">
       {/* Header */}
-      <header className="shrink-0 border-b border-gray-200 bg-white">
+      <header className="shrink-0 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
         <div className="flex items-center justify-between px-6 py-3">
           <div className="flex items-center gap-4">
-            <h1 className="text-xl font-bold text-gray-900">Life Master</h1>
-            <Link href="/task" className="text-sm text-gray-500 hover:text-gray-700">
+            <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Life Master</h1>
+            <Link href="/task" className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
               Tasks
             </Link>
-            <Link href="/bomb" className="text-sm text-gray-500 hover:text-gray-700">
+            <Link href="/bomb" className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
               Bombs
             </Link>
-            <Link href="/calendar" className="text-sm text-gray-500 hover:text-gray-700">
+            <Link href="/calendar" className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
               Calendar
             </Link>
           </div>
           <div className="flex items-center gap-3">
             <button
               onClick={() => shiftDate(-1)}
-              className="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm hover:bg-gray-50"
+              className="rounded-md border border-gray-300 dark:border-gray-600 px-2.5 py-1.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 dark:text-gray-300"
             >
               &larr;
             </button>
             <div className="text-center">
-              <div className="text-sm font-medium text-gray-900">{displayDate}</div>
+              <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{displayDate}</div>
               {!isToday && (
                 <button
                   onClick={() => setDate(todayStr())}
-                  className="text-xs text-blue-600 hover:underline"
+                  className="text-xs text-blue-600 hover:underline dark:text-blue-400"
                 >
                   Back to today
                 </button>
@@ -93,7 +94,7 @@ export default function Dashboard() {
             </div>
             <button
               onClick={() => shiftDate(1)}
-              className="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm hover:bg-gray-50"
+              className="rounded-md border border-gray-300 dark:border-gray-600 px-2.5 py-1.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 dark:text-gray-300"
             >
               &rarr;
             </button>
@@ -101,8 +102,9 @@ export default function Dashboard() {
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+              className="rounded-md border border-gray-300 dark:border-gray-600 px-2 py-1.5 text-sm dark:bg-gray-800 dark:text-gray-200"
             />
+            <ThemeToggle />
           </div>
         </div>
       </header>
@@ -110,12 +112,12 @@ export default function Dashboard() {
       {/* Main content: timeline + sidebar */}
       <div className="flex flex-1 overflow-hidden">
         {/* Timeline - main area */}
-        <main className="w-[480px] shrink-0 overflow-hidden bg-white border-r border-gray-200">
+        <main className="w-[480px] shrink-0 overflow-hidden bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700">
           <DayTimeline blocks={timeBlocks} date={date} onRefresh={fetchAll} bombs={bombs} />
         </main>
 
         {/* Sidebar - tasks & habits */}
-        <aside className="flex-1 overflow-y-auto bg-gray-50 p-4 space-y-4">
+        <aside className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-950 p-4 space-y-4">
           <TaskSection tasks={tasks} onRefresh={fetchAll} />
           <HabitSection habits={habits} date={date} onRefresh={fetchAll} />
         </aside>
