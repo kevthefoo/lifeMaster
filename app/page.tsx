@@ -73,6 +73,9 @@ export default function Dashboard() {
             <Link href="/calendar" className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
               Calendar
             </Link>
+            <Link href="/finance" className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+              Finance
+            </Link>
           </div>
           <div className="flex items-center gap-3">
             <button

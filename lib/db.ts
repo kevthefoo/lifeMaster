@@ -77,6 +77,19 @@ export function getDb(): Database.Database {
       status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'exploded', 'defused')),
       created_at TEXT DEFAULT (datetime('now'))
     );
+
+    CREATE TABLE IF NOT EXISTS subscriptions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      amount REAL NOT NULL,
+      currency TEXT NOT NULL DEFAULT 'USD',
+      billing_cycle TEXT NOT NULL DEFAULT 'monthly' CHECK(billing_cycle IN ('weekly', 'monthly', 'yearly')),
+      category TEXT NOT NULL DEFAULT 'other',
+      next_billing_date TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'paused', 'cancelled')),
+      note TEXT DEFAULT '',
+      created_at TEXT DEFAULT (datetime('now'))
+    );
   `);
 
   // Migrate tasks table: remove list_type constraint and deadline column
