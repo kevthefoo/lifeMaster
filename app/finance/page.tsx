@@ -50,6 +50,7 @@ export default function FinancePage() {
   const [billingCycle, setBillingCycle] = useState("monthly");
   const [category, setCategory] = useState("other");
   const [nextBillingDate, setNextBillingDate] = useState("");
+  const [currency, setCurrency] = useState("AUD");
   const [note, setNote] = useState("");
   const [editTarget, setEditTarget] = useState<Subscription | null>(null);
   const [editName, setEditName] = useState("");
@@ -58,6 +59,7 @@ export default function FinancePage() {
   const [editCategory, setEditCategory] = useState("other");
   const [editNextBillingDate, setEditNextBillingDate] = useState("");
   const [editStatus, setEditStatus] = useState("active");
+  const [editCurrency, setEditCurrency] = useState("AUD");
   const [editNote, setEditNote] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<Subscription | null>(null);
 
@@ -91,6 +93,7 @@ export default function FinancePage() {
       body: JSON.stringify({
         name,
         amount: parseFloat(amount),
+        currency,
         billing_cycle: billingCycle,
         category,
         next_billing_date: nextBillingDate,
@@ -99,6 +102,7 @@ export default function FinancePage() {
     });
     setName("");
     setAmount("");
+    setCurrency("AUD");
     setBillingCycle("monthly");
     setCategory("other");
     setNextBillingDate("");
@@ -112,6 +116,7 @@ export default function FinancePage() {
     setEditName(sub.name);
     setEditAmount(String(sub.amount));
     setEditBillingCycle(sub.billing_cycle);
+    setEditCurrency(sub.currency || "AUD");
     setEditCategory(sub.category);
     setEditNextBillingDate(sub.next_billing_date);
     setEditStatus(sub.status);
@@ -126,6 +131,7 @@ export default function FinancePage() {
       body: JSON.stringify({
         name: editName,
         amount: parseFloat(editAmount),
+        currency: editCurrency,
         billing_cycle: editBillingCycle,
         category: editCategory,
         next_billing_date: editNextBillingDate,
@@ -257,7 +263,7 @@ export default function FinancePage() {
               </div>
               <div className="shrink-0 text-right">
                 <div className="text-sm font-bold text-gray-900 dark:text-gray-100">
-                  ${sub.amount.toFixed(2)}
+                  {sub.currency === "JPY" ? "¥" : sub.currency === "EUR" ? "€" : sub.currency === "GBP" ? "£" : "$"}{sub.amount.toFixed(2)} <span className="text-xs font-normal text-gray-500">{sub.currency}</span>
                 </div>
                 <div className="text-xs text-gray-500 dark:text-gray-400">
                   /{sub.billing_cycle === "monthly" ? "mo" : sub.billing_cycle === "yearly" ? "yr" : "wk"}
@@ -293,6 +299,19 @@ export default function FinancePage() {
                   className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-200"
                   required
                 />
+                <select
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value)}
+                  className="w-24 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-200"
+                >
+                  <option value="AUD">AUD</option>
+                  <option value="USD">USD</option>
+                  <option value="EUR">EUR</option>
+                  <option value="GBP">GBP</option>
+                  <option value="JPY">JPY</option>
+                  <option value="CAD">CAD</option>
+                  <option value="NZD">NZD</option>
+                </select>
                 <select
                   value={billingCycle}
                   onChange={(e) => setBillingCycle(e.target.value)}
@@ -373,6 +392,19 @@ export default function FinancePage() {
                 className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-200"
                 required
               />
+              <select
+                value={editCurrency}
+                onChange={(e) => setEditCurrency(e.target.value)}
+                className="w-24 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-200"
+              >
+                <option value="AUD">AUD</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+                <option value="JPY">JPY</option>
+                <option value="CAD">CAD</option>
+                <option value="NZD">NZD</option>
+              </select>
               <select
                 value={editBillingCycle}
                 onChange={(e) => setEditBillingCycle(e.target.value)}

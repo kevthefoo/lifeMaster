@@ -82,7 +82,7 @@ export function getDb(): Database.Database {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
       amount REAL NOT NULL,
-      currency TEXT NOT NULL DEFAULT 'USD',
+      currency TEXT NOT NULL DEFAULT 'AUD',
       billing_cycle TEXT NOT NULL DEFAULT 'monthly' CHECK(billing_cycle IN ('weekly', 'monthly', 'yearly')),
       category TEXT NOT NULL DEFAULT 'other',
       next_billing_date TEXT NOT NULL,
