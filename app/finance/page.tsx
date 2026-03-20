@@ -34,6 +34,7 @@ const STATUS_BADGES: Record<string, string> = {
 };
 
 type FilterMode = "all" | "active" | "paused" | "cancelled";
+type SortMode = "due_date" | "cost";
 
 function getMonthlyEquivalent(amount: number, cycle: string): number {
   if (cycle === "weekly") return amount * 4.33;
@@ -44,6 +45,7 @@ function getMonthlyEquivalent(amount: number, cycle: string): number {
 export default function FinancePage() {
   const [subs, setSubs] = useState<Subscription[]>([]);
   const [filterMode, setFilterMode] = useState<FilterMode>("all");
+  const [sortMode, setSortMode] = useState<SortMode>("due_date");
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
@@ -83,6 +85,13 @@ export default function FinancePage() {
     const diff = (new Date(s.next_billing_date + "T00:00:00").getTime() - Date.now()) / 86400000;
     return diff >= 0 && diff <= 7;
   }).length;
+
+  const sortedSubs = [...subs].sort((a, b) => {
+    if (sortMode === "cost") {
+      return b.amount - a.amount;
+    }
+    return new Date(a.next_billing_date).getTime() - new Date(b.next_billing_date).getTime();
+  });
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
@@ -219,6 +228,22 @@ export default function FinancePage() {
             </button>
           ))}
         </div>
+        <div className="ml-auto flex items-center gap-2 text-sm">
+          <span className="text-gray-500 dark:text-gray-400">Sort:</span>
+          {([["due_date", "Due Date"], ["cost", "Cost"]] as [SortMode, string][]).map(([value, label]) => (
+            <button
+              key={value}
+              onClick={() => setSortMode(value)}
+              className={`rounded-md px-2.5 py-1 text-xs font-medium ${
+                sortMode === value
+                  ? "bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Subscription list */}
@@ -227,7 +252,7 @@ export default function FinancePage() {
           {subs.length === 0 && (
             <p className="text-center text-sm text-gray-400 dark:text-gray-500 py-12">No subscriptions found.</p>
           )}
-          {subs.map((sub) => (
+          {sortedSubs.map((sub) => (
             <div
               key={sub.id}
               onClick={() => openEdit(sub)}
