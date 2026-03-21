@@ -184,7 +184,7 @@ export default function FinancePage() {
             <ThemeToggle />
             <button
               onClick={() => setShowForm(!showForm)}
-              className="rounded-lg bg-emerald-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-emerald-700"
+              className="cursor-pointer rounded-lg bg-emerald-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-emerald-700"
             >
               {showForm ? "Cancel" : "Add Subscription"}
             </button>
@@ -218,7 +218,7 @@ export default function FinancePage() {
             <button
               key={f}
               onClick={() => setFilterMode(f)}
-              className={`rounded-md px-2.5 py-1 text-xs font-medium capitalize ${
+              className={`cursor-pointer rounded-md px-2.5 py-1 text-xs font-medium capitalize ${
                 filterMode === f
                   ? "bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900"
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
@@ -234,7 +234,7 @@ export default function FinancePage() {
             <button
               key={value}
               onClick={() => setSortMode(value)}
-              className={`rounded-md px-2.5 py-1 text-xs font-medium ${
+              className={`cursor-pointer rounded-md px-2.5 py-1 text-xs font-medium ${
                 sortMode === value
                   ? "bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900"
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
@@ -301,8 +301,8 @@ export default function FinancePage() {
 
       {/* Add form modal */}
       {showForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="w-full max-w-md rounded-xl bg-white dark:bg-gray-800 p-6 shadow-xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setShowForm(false)}>
+          <div className="w-full max-w-md rounded-xl bg-white dark:bg-gray-800 p-6 shadow-xl" onClick={e => e.stopPropagation()}>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Add Subscription</h3>
             <form onSubmit={handleAdd} className="space-y-3">
               <input
@@ -380,13 +380,13 @@ export default function FinancePage() {
                 <button
                   type="button"
                   onClick={() => setShowForm(false)}
-                  className="rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-300"
+                  className="cursor-pointer rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-300"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
+                  className="cursor-pointer rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
                 >
                   Add
                 </button>
@@ -398,8 +398,8 @@ export default function FinancePage() {
 
       {/* Edit modal */}
       {editTarget && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="w-full max-w-md rounded-xl bg-white dark:bg-gray-800 p-6 shadow-xl space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setEditTarget(null)}>
+          <div className="w-full max-w-md rounded-xl bg-white dark:bg-gray-800 p-6 shadow-xl space-y-4" onClick={e => e.stopPropagation()}>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Edit Subscription</h3>
             <input
               type="text"
@@ -481,19 +481,19 @@ export default function FinancePage() {
             <div className="flex gap-2 justify-end">
               <button
                 onClick={() => setEditTarget(null)}
-                className="rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-300"
+                className="cursor-pointer rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-300"
               >
                 Cancel
               </button>
               <button
                 onClick={() => setDeleteTarget(editTarget)}
-                className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+                className="cursor-pointer rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
               >
                 Delete
               </button>
               <button
                 onClick={handleEditSave}
-                className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
+                className="cursor-pointer rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
               >
                 Save
               </button>
@@ -504,8 +504,8 @@ export default function FinancePage() {
 
       {/* Delete confirmation modal */}
       {deleteTarget && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40">
-          <div className="w-full max-w-sm rounded-xl bg-white dark:bg-gray-800 p-6 shadow-xl">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40" onClick={() => setDeleteTarget(null)}>
+          <div className="w-full max-w-sm rounded-xl bg-white dark:bg-gray-800 p-6 shadow-xl" onClick={e => e.stopPropagation()}>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Delete Subscription</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
               Are you sure you want to delete &quot;{deleteTarget.name}&quot;?
@@ -513,13 +513,13 @@ export default function FinancePage() {
             <div className="flex gap-2 justify-end">
               <button
                 onClick={() => setDeleteTarget(null)}
-                className="rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-300"
+                className="cursor-pointer rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-300"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmDelete}
-                className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+                className="cursor-pointer rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
               >
                 Delete
               </button>

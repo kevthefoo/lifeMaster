@@ -77,7 +77,7 @@ export default function TaskSection({
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="rounded-lg bg-purple-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-purple-700"
+          className="cursor-pointer rounded-lg bg-purple-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-purple-700"
         >
           {showForm ? "Cancel" : "+ Add"}
         </button>
@@ -173,8 +173,8 @@ export default function TaskSection({
 
       {/* Complete confirmation modal */}
       {completeTarget && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40">
-          <div className="w-full max-w-sm rounded-xl bg-white dark:bg-gray-800 p-6 shadow-xl">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40" onClick={() => setCompleteTarget(null)}>
+          <div className="w-full max-w-sm rounded-xl bg-white dark:bg-gray-800 p-6 shadow-xl" onClick={e => e.stopPropagation()}>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Complete Task</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
               Mark &quot;{completeTarget.title}&quot; as completed?
@@ -182,13 +182,13 @@ export default function TaskSection({
             <div className="flex gap-2 justify-end">
               <button
                 onClick={() => setCompleteTarget(null)}
-                className="rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-300"
+                className="cursor-pointer rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-300"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmComplete}
-                className="rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700"
+                className="cursor-pointer rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700"
               >
                 Complete
               </button>

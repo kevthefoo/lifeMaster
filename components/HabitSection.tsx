@@ -91,7 +91,7 @@ export default function HabitSection({
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Habit Tracker</h2>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700"
+          className="cursor-pointer rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700"
         >
           {showForm ? "Cancel" : "+ Add"}
         </button>
