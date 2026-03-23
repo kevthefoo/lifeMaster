@@ -111,7 +111,7 @@ export default function TaskSection({
           />
           <button
             type="submit"
-            className="w-full rounded-md bg-purple-600 py-2 text-sm font-medium text-white hover:bg-purple-700"
+            className="w-full rounded-md bg-purple-600 py-2 text-sm font-medium text-white hover:bg-purple-700 cursor-pointer"
           >
             Add Task
           </button>

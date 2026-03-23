@@ -154,7 +154,7 @@ export default function HabitSection({
           )}
           <button
             type="submit"
-            className="w-full rounded-md bg-emerald-600 py-2 text-sm font-medium text-white hover:bg-emerald-700"
+            className="w-full rounded-md bg-emerald-600 py-2 text-sm font-medium text-white hover:bg-emerald-700 cursor-pointer"
           >
             Add Habit
           </button>
