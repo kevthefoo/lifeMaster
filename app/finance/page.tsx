@@ -42,6 +42,35 @@ function getMonthlyEquivalent(amount: number, cycle: string): number {
   return amount;
 }
 
+function getUpcomingDate(anchorDate: string, cycle: string): Date {
+  const anchor = new Date(anchorDate + "T00:00:00");
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const next = new Date(anchor);
+
+  if (cycle === "weekly") {
+    while (next < today) next.setDate(next.getDate() + 7);
+  } else if (cycle === "yearly") {
+    while (next < today) next.setFullYear(next.getFullYear() + 1);
+  } else {
+    const anchorDay = anchor.getDate();
+    while (next < today) {
+      next.setDate(1);
+      next.setMonth(next.getMonth() + 1);
+      const lastDay = new Date(next.getFullYear(), next.getMonth() + 1, 0).getDate();
+      next.setDate(Math.min(anchorDay, lastDay));
+    }
+  }
+  return next;
+}
+
+function formatDateInput(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
 export default function FinancePage() {
   const [subs, setSubs] = useState<Subscription[]>([]);
   const [filterMode, setFilterMode] = useState<FilterMode>("all");
@@ -82,15 +111,18 @@ export default function FinancePage() {
     0
   );
   const upcomingCount = activeSubs.filter((s) => {
-    const diff = (new Date(s.next_billing_date + "T00:00:00").getTime() - Date.now()) / 86400000;
-    return diff >= 0 && diff <= 7;
+    const diff = (getUpcomingDate(s.next_billing_date, s.billing_cycle).getTime() - Date.now()) / 86400000;
+    return diff >= -1 && diff <= 7;
   }).length;
 
   const sortedSubs = [...subs].sort((a, b) => {
     if (sortMode === "cost") {
       return b.amount - a.amount;
     }
-    return new Date(a.next_billing_date).getTime() - new Date(b.next_billing_date).getTime();
+    return (
+      getUpcomingDate(a.next_billing_date, a.billing_cycle).getTime() -
+      getUpcomingDate(b.next_billing_date, b.billing_cycle).getTime()
+    );
   });
 
   async function handleAdd(e: React.FormEvent) {
@@ -127,7 +159,7 @@ export default function FinancePage() {
     setEditBillingCycle(sub.billing_cycle);
     setEditCurrency(sub.currency || "AUD");
     setEditCategory(sub.category);
-    setEditNextBillingDate(sub.next_billing_date);
+    setEditNextBillingDate(formatDateInput(getUpcomingDate(sub.next_billing_date, sub.billing_cycle)));
     setEditStatus(sub.status);
     setEditNote(sub.note || "");
   }
@@ -281,7 +313,7 @@ export default function FinancePage() {
                   </span>
                 </div>
                 <div className="mt-1 flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
-                  <span>Next: {new Date(sub.next_billing_date + "T00:00:00").toLocaleDateString()}</span>
+                  <span>Next: {getUpcomingDate(sub.next_billing_date, sub.billing_cycle).toLocaleDateString()}</span>
                   <span>| {sub.billing_cycle}</span>
                   {sub.note && <span className="truncate">| {sub.note}</span>}
                 </div>
